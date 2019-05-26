@@ -6,6 +6,7 @@
 var paper = document.getElementById('paper');
 var rock = document.getElementById('rock');
 var scissors = document.getElementById('scissors');
+var allButtons = document.getElementsByClassName('.player-move');
 var newGame = document.getElementById('newGame');
 
 // hide buttons at beggining
@@ -22,12 +23,23 @@ var gameOverDisplay = document.getElementById('gameOverDisplay');
 
 //variables
 var whoWin
-var scorePlayer;
+/*var scorePlayer;
 var scoreComputer;
-var howManyGames;
+var howManyGames; 
+var newGameStarted;*/
 var infoAboutWinnerText;
 var gameOver;
-var newGameStarted;
+var progress = new Array();
+
+var params = {
+    score: {
+        player: 0,
+        computer: 0
+    },
+    howManyGames: null,
+    newGameStarted: false
+}
+progress = ['']
 
 // new game - click button
 newGame.addEventListener('click', function () {
@@ -36,17 +48,20 @@ newGame.addEventListener('click', function () {
     resultSum.innerHTML = '';
     infoAboutWinnerMain.innerHTML = '';
     gameOverDisplay.innerHTML = '';
-    howManyGames = 0;
+    /*howManyGames = 0;
     scorePlayer = 0;
-    scoreComputer = 0;
+    scoreComputer = 0;*/
+    params.score.player = 0;
+    params.score.computer = 0;
     infoAboutWinnerText = '';
     gameOver = '';
-    newGameStarted = true;
+    params.newGameStarted = true;
+    progress = '';
     //set how long to play
-    howManyGames = window.prompt('How many rounds you want to play?');
+    params.howManyGames = window.prompt('How many rounds you want to play?');
     var display
-    if (howManyGames > 0) {
-        display = 'You will play until ' + howManyGames + ' points;' +
+    if (params.howManyGames > 0) {
+        display = 'You will play until ' + params.howManyGames + ' points;' +
             '<br>';
         document.getElementById('paper').style.visibility = 'visible';
         document.getElementById('rock').style.visibility = 'visible';
@@ -58,7 +73,7 @@ newGame.addEventListener('click', function () {
 });
 
 // click on buttons to make move
-paper.addEventListener('click', function () {
+/*paper.addEventListener('click', function () {
     getPlayerMove('paper');
 });
 rock.addEventListener('click', function () {
@@ -67,6 +82,22 @@ rock.addEventListener('click', function () {
 scissors.addEventListener('click', function () {
     getPlayerMove('scissors');
 });
+*/
+
+var gameButtons = document.querySelectorAll('.game-buttons button');
+for(var i = 0; i < gameButtons.length; i++) {
+    gameButtons[i].addEventListener('click', function (e) {
+        getPlayerMove(e.target.getAttribute('data-move'));
+    });
+}
+/*
+allButtons
+for (var i = 0; i < allButtons.length; i++) {
+    allButtons[i].addEventListener('click', function (event) {
+        event.stopPropagation();
+    });
+}
+*/
 
 //computer move 
 var getComputerMove = function () {
@@ -88,10 +119,11 @@ var getComputerMove = function () {
 function getPlayerMove(parameter) {
 
     var computerUse = getComputerMove();
+    infoAboutWinnerText = ''
 
     //Game finished - to check before next round
     if (
-        scorePlayer == howManyGames || scoreComputer == howManyGames
+        params.score.player == params.howManyGames || params.score.computer == params.howManyGames
     ) {
         gameOver = '<br> Game over, please press the new game button!';
         gameOverDisplay.innerHTML = gameOver + gameOverDisplay.innerHTML;
@@ -107,23 +139,74 @@ function getPlayerMove(parameter) {
         //won player
         else if ((parameter == 'rock' && computerUse == 'scissors') || (parameter == 'paper' && computerUse == 'rock') || (parameter == 'scissors' && computerUse == 'paper')) {
             var whoWin = 'YOU WON!';
-            scorePlayer = scorePlayer + 1;
-            if (scorePlayer == howManyGames) {
+            params.score.player += 1;
+            if (params.score.player == params.howManyGames) {
                 infoAboutWinnerText = 'YOU WON THE ENTIRE GAME!!!';
             }
         }
         //won computer
         else {
             var whoWin = 'COMPUTER WON!';
-            scoreComputer = scoreComputer + 1;
-            if (scoreComputer == howManyGames) {
+            params.score.computer  += 1;
+            if (params.score.computer ==params.howManyGames) {
                 infoAboutWinnerText = 'COMPUTER WON THE ENTIRE GAME!!!';
             }
         }
         output.innerHTML = 'You played: ' + parameter + '. Computer played: ' + computerUse + '. ' + whoWin + '<br>' + output.innerHTML;
     }
+/*
+    progress.push({
+        playerScore: params.score.player,
+        playerMove: parameter,
+        computerScore: params.score.computer,
+        computerMove: computerUse,
+        whoWin: whoWin
+    });
+    */
+
 
     //display data
-    resultSum.innerHTML = 'Your score: ' + scorePlayer + '. Computer score: ' + scoreComputer;
-    infoAboutWinnerMain.innerHTML = '' + infoAboutWinnerText;
+    resultSum.innerHTML = 'Your score: ' + params.score.player + '. Computer score: ' + params.score.computer;
+    /*infoAboutWinnerMain.innerHTML = '' + infoAboutWinnerText; */
+    if(infoAboutWinnerText) {
+        document.querySelector('#game-result-modal h3').innerHTML = infoAboutWinnerText
+        showModal('game-result-modal')
+    }
+    
 };
+
+function showModal(modalName) {
+document.querySelector('.overlay').classList.add('show')
+var modals = document.querySelectorAll('.modal')
+for(var i = 0; i <modals.length; i++) {
+    modals[i].classList.remove('show')
+}
+    /*document.querySelector('.modal#'+modalName).classList.add('show') */
+    document.querySelector('.modal#'+modalName).classList.add('show')
+}
+
+function hideModal() {
+    document.querySelector('.overlay').classList.remove('show')
+}
+
+document.querySelector('#game-result-modal').addEventListener('click', hideModal);
+
+var modals = document.querySelectorAll('.modal');
+
+for (var i = 0; i < modals.length; i++) {
+    modals[i].addEventListener('click', function (event) {
+        event.stopPropagation();
+    });
+}
+
+function renderProgressTable(){
+    document.querySelector('#game-result-modal tbody').innerHTML = ''
+    for(var i= 0; i < progress.length; i++) {
+        var row = document.createElement('tr');
+        var roundNumberClolumn = document.createElemement('td');
+        roundNumberClolumn.innerHTML = (i + 1) + '.'
+        row.append(roundNumberClolumn)
+        tbody.append(row)
+    }
+}
+
