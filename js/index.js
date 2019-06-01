@@ -39,7 +39,7 @@ var params = {
     howManyGames: null,
     newGameStarted: false
 }
-progress = ['']
+progress = []
 
 // new game - click button
 newGame.addEventListener('click', function () {
@@ -56,7 +56,7 @@ newGame.addEventListener('click', function () {
     infoAboutWinnerText = '';
     gameOver = '';
     params.newGameStarted = true;
-    progress = '';
+    //progress = '';
     //set how long to play
     params.howManyGames = window.prompt('How many rounds you want to play?');
     var display
@@ -148,13 +148,13 @@ function getPlayerMove(parameter) {
         else {
             var whoWin = 'COMPUTER WON!';
             params.score.computer  += 1;
-            if (params.score.computer ==params.howManyGames) {
+            if (params.score.computer == params.howManyGames) {
                 infoAboutWinnerText = 'COMPUTER WON THE ENTIRE GAME!!!';
             }
         }
         output.innerHTML = 'You played: ' + parameter + '. Computer played: ' + computerUse + '. ' + whoWin + '<br>' + output.innerHTML;
     }
-/*
+
     progress.push({
         playerScore: params.score.player,
         playerMove: parameter,
@@ -162,7 +162,9 @@ function getPlayerMove(parameter) {
         computerMove: computerUse,
         whoWin: whoWin
     });
-    */
+
+    console.log(progress)
+
 
 
     //display data
@@ -170,8 +172,10 @@ function getPlayerMove(parameter) {
     /*infoAboutWinnerMain.innerHTML = '' + infoAboutWinnerText; */
     if(infoAboutWinnerText) {
         document.querySelector('#game-result-modal h3').innerHTML = infoAboutWinnerText
+        renderProgressTable;
+        debugger
         showModal('game-result-modal')
-    }
+    } 
     
 };
 
@@ -200,13 +204,30 @@ for (var i = 0; i < modals.length; i++) {
 }
 
 function renderProgressTable(){
-    document.querySelector('#game-result-modal tbody').innerHTML = ''
-    for(var i= 0; i < progress.length; i++) {
+    var tbody = document.querySelector('#game-result-modal tbody')
+    tbody.innerHTML = ''
+
+    for(var i = 0; i < progress.length; i++) {
         var row = document.createElement('tr');
+
         var roundNumberClolumn = document.createElemement('td');
         roundNumberClolumn.innerHTML = (i + 1) + '.'
-        row.append(roundNumberClolumn)
+        
+        var playerMoveClolumn = document.createElemement('td');
+        playerMoveClolumn.innerHTML = progress[i].playerMove
+
+        var computerMoveClolumn = document.createElemement('td');
+        computerMoveClolumn.innerHTML = progress[i].computerMove
+        
+        var whoWinClolumn = document.createElemement('td');
+        whoWinClolumn.innerHTML = progress[i].whoWin
+
+        var scoreColumn = document.createElemement('td');
+        scoreColumn.innerHTML = progress[i].playerScore + ' : ' + progress[i].computerScore 
+        
+        row.append(roundNumberClolumn, playerMoveClolumn, computerMoveClolumn, whoWinClolumn, scoreColumn)
         tbody.append(row)
+        
     }
 }
 
