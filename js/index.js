@@ -23,10 +23,6 @@ var gameOverDisplay = document.getElementById('gameOverDisplay');
 
 //variables
 var whoWin
-/*var scorePlayer;
-var scoreComputer;
-var howManyGames; 
-var newGameStarted;*/
 var infoAboutWinnerText;
 var gameOver;
 var progress = new Array();
@@ -48,16 +44,12 @@ newGame.addEventListener('click', function () {
     resultSum.innerHTML = '';
     infoAboutWinnerMain.innerHTML = '';
     gameOverDisplay.innerHTML = '';
-    /*howManyGames = 0;
-    scorePlayer = 0;
-    scoreComputer = 0;*/
     params.score.player = 0;
     params.score.computer = 0;
     infoAboutWinnerText = '';
     gameOver = '';
     params.newGameStarted = true;
-    //progress = '';
-    //set how long to play
+    progress = [];
     params.howManyGames = window.prompt('How many rounds you want to play?');
     var display
     if (params.howManyGames > 0) {
@@ -72,32 +64,12 @@ newGame.addEventListener('click', function () {
     maxScore.innerHTML = display;
 });
 
-// click on buttons to make move
-/*paper.addEventListener('click', function () {
-    getPlayerMove('paper');
-});
-rock.addEventListener('click', function () {
-    getPlayerMove('rock');
-});
-scissors.addEventListener('click', function () {
-    getPlayerMove('scissors');
-});
-*/
-
 var gameButtons = document.querySelectorAll('.game-buttons button');
-for(var i = 0; i < gameButtons.length; i++) {
+for (var i = 0; i < gameButtons.length; i++) {
     gameButtons[i].addEventListener('click', function (e) {
         getPlayerMove(e.target.getAttribute('data-move'));
     });
 }
-/*
-allButtons
-for (var i = 0; i < allButtons.length; i++) {
-    allButtons[i].addEventListener('click', function (event) {
-        event.stopPropagation();
-    });
-}
-*/
 
 //computer move 
 var getComputerMove = function () {
@@ -147,7 +119,7 @@ function getPlayerMove(parameter) {
         //won computer
         else {
             var whoWin = 'COMPUTER WON!';
-            params.score.computer  += 1;
+            params.score.computer += 1;
             if (params.score.computer == params.howManyGames) {
                 infoAboutWinnerText = 'COMPUTER WON THE ENTIRE GAME!!!';
             }
@@ -169,24 +141,23 @@ function getPlayerMove(parameter) {
 
     //display data
     resultSum.innerHTML = 'Your score: ' + params.score.player + '. Computer score: ' + params.score.computer;
-    /*infoAboutWinnerMain.innerHTML = '' + infoAboutWinnerText; */
-    if(infoAboutWinnerText) {
-        document.querySelector('#game-result-modal h3').innerHTML = infoAboutWinnerText
-        renderProgressTable;
+    if (infoAboutWinnerText) {
+        document.querySelector('#game-result-modal h3').innerHTML = infoAboutWinnerText;
+        renderProgressTable();
         debugger
         showModal('game-result-modal')
-    } 
-    
+    }
+
 };
 
 function showModal(modalName) {
-document.querySelector('.overlay').classList.add('show')
-var modals = document.querySelectorAll('.modal')
-for(var i = 0; i <modals.length; i++) {
-    modals[i].classList.remove('show')
-}
-    /*document.querySelector('.modal#'+modalName).classList.add('show') */
-    document.querySelector('.modal#'+modalName).classList.add('show')
+    document.querySelector('.overlay').classList.add('show')
+    var modals = document.querySelectorAll('.modal')
+    for (var i = 0; i < modals.length; i++) {
+        modals[i].classList.remove('show')
+    }
+
+    document.querySelector('.modal#' + modalName).classList.add('show')
 }
 
 function hideModal() {
@@ -203,31 +174,30 @@ for (var i = 0; i < modals.length; i++) {
     });
 }
 
-function renderProgressTable(){
+function renderProgressTable() {
     var tbody = document.querySelector('#game-result-modal tbody')
     tbody.innerHTML = ''
 
-    for(var i = 0; i < progress.length; i++) {
+    for (var i = 0; i < progress.length; i++) {
         var row = document.createElement('tr');
 
-        var roundNumberClolumn = document.createElemement('td');
+        var roundNumberClolumn = document.createElement('td');
         roundNumberClolumn.innerHTML = (i + 1) + '.'
-        
-        var playerMoveClolumn = document.createElemement('td');
+
+        var playerMoveClolumn = document.createElement('td');
         playerMoveClolumn.innerHTML = progress[i].playerMove
 
-        var computerMoveClolumn = document.createElemement('td');
+        var computerMoveClolumn = document.createElement('td');
         computerMoveClolumn.innerHTML = progress[i].computerMove
-        
-        var whoWinClolumn = document.createElemement('td');
+
+        var whoWinClolumn = document.createElement('td');
         whoWinClolumn.innerHTML = progress[i].whoWin
 
-        var scoreColumn = document.createElemement('td');
-        scoreColumn.innerHTML = progress[i].playerScore + ' : ' + progress[i].computerScore 
-        
+        var scoreColumn = document.createElement('td');
+        scoreColumn.innerHTML = progress[i].playerScore + ' : ' + progress[i].computerScore
+
         row.append(roundNumberClolumn, playerMoveClolumn, computerMoveClolumn, whoWinClolumn, scoreColumn)
         tbody.append(row)
-        
+
     }
 }
-
